@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { BlogFilters } from "./_components/blog-filters"
 import { Pagination } from "./_components/pagination"
+import { FeaturedPosts } from "./_components/featured-posts"
 
 export default function BlogPage() {
   return (
@@ -18,43 +19,8 @@ export default function BlogPage() {
           <p className="text-muted-foreground">Discover the latest insights, tutorials, and updates from our team.</p>
         </div>
 
-        {/* Featured Posts */}
-        <section className="space-y-4">
-          <h2 className="text-2xl font-semibold">Featured Posts</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredPosts.map((post) => (
-              <Card key={post.id} className="overflow-hidden">
-                <div className="relative h-48 w-full">
-                  <Image src={post.image || "/placeholder.svg"} alt={post.title} fill className="object-cover" />
-                </div>
-                <CardHeader className="p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    {post.categories.map((category) => (
-                      <Badge key={category} variant="secondary">
-                        {category}
-                      </Badge>
-                    ))}
-                  </div>
-                  <Link href={`/blog/${post.slug}`} className="hover:underline">
-                    <h3 className="text-xl font-semibold">{post.title}</h3>
-                  </Link>
-                </CardHeader>
-                <CardContent className="p-4 pt-0">
-                  <p className="text-muted-foreground line-clamp-2">{post.excerpt}</p>
-                </CardContent>
-                <CardFooter className="p-4 pt-0 flex justify-between">
-                  <p className="text-sm text-muted-foreground">{post.date}</p>
-                  <Link href={`/blog/${post.slug}`}>
-                    <Button variant="link" className="p-0 h-auto">
-                      Read more
-                    </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </section>
-
+        {/* Featured Posts Section */}
+        <FeaturedPosts />
         <Separator />
 
         {/* Main Content */}
@@ -113,36 +79,6 @@ export default function BlogPage() {
   )
 }
 
-// Update the featuredPosts array with better placeholder images
-const featuredPosts = [
-  {
-    id: 1,
-    title: "Getting Started with Next.js 14",
-    slug: "getting-started-with-nextjs-14",
-    excerpt: "Learn how to build modern web applications with Next.js 14 and its powerful features.",
-    date: "April 10, 2024",
-    image: "https://imgs.search.brave.com/m2KKpE9mVa6jzJe-IM4DZsUOMc5IyHY2kQHyhYBvCxs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/ODg1MzEtTUxCNzY3/NTI4Nzg3NjdfMDUy/MDI0LU8ud2VicA",
-    categories: ["Next.js", "React"],
-  },
-  {
-    id: 2,
-    title: "Mastering Tailwind CSS",
-    slug: "mastering-tailwind-css",
-    excerpt: "Discover advanced techniques and best practices for building beautiful UIs with Tailwind CSS.",
-    date: "April 5, 2024",
-    image: "https://imgs.search.brave.com/m2KKpE9mVa6jzJe-IM4DZsUOMc5IyHY2kQHyhYBvCxs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/ODg1MzEtTUxCNzY3/NTI4Nzg3NjdfMDUy/MDI0LU8ud2VicA",
-    categories: ["CSS", "Design"],
-  },
-  {
-    id: 3,
-    title: "The Future of Web Development",
-    slug: "future-of-web-development",
-    excerpt: "Explore emerging trends and technologies shaping the future of web development.",
-    date: "March 28, 2024",
-    image: "https://imgs.search.brave.com/m2KKpE9mVa6jzJe-IM4DZsUOMc5IyHY2kQHyhYBvCxs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/ODg1MzEtTUxCNzY3/NTI4Nzg3NjdfMDUy/MDI0LU8ud2VicA",
-    categories: ["Web Dev", "Trends"],
-  },
-]
 
 // Update the blogPosts array with better placeholder images
 const blogPosts = [
