@@ -5,6 +5,8 @@ import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 import "./globals.css";
+import { cookies } from "next/headers";
+
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
@@ -12,21 +14,30 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Portal",
-  description: "Portal",
-  
+  title: "GameRead Portal",
+  description: "GameRead Portal",
+  openGraph: {
+    title: "GameRead Portal",
+    description: "GameRead Portal",
+    images: ["/og.png"]
+  }
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookiesStore = await cookies()
+
+  const theme = cookiesStore.get("theme")?.value || "dark"
+
   return (
-    <html lang="en">
+    <html className={theme} lang="en">
       <body
         className={`${openSans.variable} font-Satoshi antialiased`}
       >
+        {/* <Header defaultTheme={theme} /> */}
         {children}
         <Toaster position="top-right" />
         <Analytics />
