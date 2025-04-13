@@ -11,6 +11,7 @@ import { ShareButtons } from "./_components/share-buttons"
 import { AuthorBio } from "./_components/author-biography"
 import { RelatedPosts } from "./_components/related-posts"
 import { Comments } from "./_components/comments"
+import { ScrollProgressBar } from "./_components/scroll-progress-bar"
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   // In a real application, you would fetch the post data based on the slug
@@ -23,6 +24,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   }
 
   return (
+
+<>
+<ScrollProgressBar />
+
     <div className="container mx-auto py-8 px-4 md:px-6">
       <div className="max-w-4xl mx-auto">
         {/* Breadcrumb */}
@@ -226,6 +231,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         </div>
       </div>
     </div>
+</>
   )
 }
 
