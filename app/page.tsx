@@ -16,6 +16,17 @@ import { REVALIDATE_TIME } from "./utils/cache"
 //     `https://cdn.contentful.com/spaces/x4hjy2nnt83c/environments/master/entries?content_type=pageBlogPost&fields.title[match]=${search || ''}&limit=${PAGE_SIZE}&order=-fields.publishedDate`,
 //     {
 
+// interface BlogPostsReturnProps {
+//   skip: number
+//   limit: number
+//   items: {
+//     fields: { slug: string, rating: number, publishedDate: Date, title: string, subtitle: string }
+//     metadata: {
+//       tags: string[]
+//       concepts: string[]
+//     }
+//   }[]
+// }
 
 async function fetchBlogPosts() {
   const response = await fetch(`${API_BASE_URL}/spaces/${env.CONTENTFUL_SPACE_ID}/environments/${env.CONTENTFUL_ENVIRONMENT}/entries`, {
@@ -59,7 +70,7 @@ export default async function BlogPage() {
           {/* Blog Posts */}
           <div className="lg:col-span-3 space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold text-blue-600">All Posts</h2>
+              <h2 className="text-2xl font-bold">All Posts</h2>
               <p className="text-sm text-muted-foreground">Showing 1-6 of 24 posts</p>
             </div>
 

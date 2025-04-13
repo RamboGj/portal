@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
-import "./globals.css";
 import { Toaster } from "sonner";
-import Script from "next/script";
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
+import "./globals.css";
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
@@ -22,12 +24,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1266444059498080" crossOrigin="anonymous" />
       <body
         className={`${openSans.variable} font-Satoshi antialiased`}
       >
         {children}
         <Toaster position="top-right" />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
