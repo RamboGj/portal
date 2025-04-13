@@ -2,9 +2,9 @@ import { z } from 'zod'
 
 const envSchema = z.object({
     NEXT_PUBLIC_API_BASE_URL: z.string(),
-    NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN: z.string(),
-    NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT: z.string(),
-    NEXT_PUBLIC_CONTENTFUL_SPACE_ID: z.string(),
+    CONTENTFUL_ACCESS_TOKEN: z.string(),
+    CONTENTFUL_ENVIRONMENT: z.string(),
+    CONTENTFUL_SPACE_ID: z.string(),
 })
 
 type EnvType = z.infer<typeof envSchema>
@@ -12,11 +12,11 @@ type EnvType = z.infer<typeof envSchema>
 function getEnv(): EnvType {
   const _env = {
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
-    NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN:
-      process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN,
-      NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT: process.env.NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT,
-      NEXT_PUBLIC_CONTENTFUL_SPACE_ID:
-        process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID,
+    CONTENTFUL_ACCESS_TOKEN:
+      process.env.CONTENTFUL_ACCESS_TOKEN,
+      CONTENTFUL_ENVIRONMENT: process.env.CONTENTFUL_ENVIRONMENT,
+      CONTENTFUL_SPACE_ID:
+        process.env.CONTENTFUL_SPACE_ID,
   }
 
 

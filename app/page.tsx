@@ -18,13 +18,13 @@ import { REVALIDATE_TIME } from "./utils/cache"
 
 
 async function fetchBlogPosts() {
-  const response = await fetch(`${API_BASE_URL}/spaces/${env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}/environments/${env.NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT}/entries`, {
+  const response = await fetch(`${API_BASE_URL}/spaces/${env.CONTENTFUL_SPACE_ID}/environments/${env.CONTENTFUL_ENVIRONMENT}/entries`, {
     cache: 'force-cache',
     next: {
       revalidate: REVALIDATE_TIME
     },
     headers: {
-      Authorization: `Bearer ${env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${env.CONTENTFUL_ACCESS_TOKEN}`,
     },
   })
   const data = await response.json()
