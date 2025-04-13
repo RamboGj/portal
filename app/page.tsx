@@ -37,6 +37,7 @@ export default async function BlogPage() {
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
+
       <div className="space-y-8">
         {/* Page Header */}
         <div className="space-y-2">
