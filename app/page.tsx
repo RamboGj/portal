@@ -8,8 +8,33 @@ import { Separator } from "@/components/ui/separator"
 import { BlogFilters } from "./_components/blog-filters"
 import { Pagination } from "./_components/pagination"
 import { FeaturedPosts } from "./_components/featured-posts"
+import { API_BASE_URL } from "./utils/api"
+import { env } from "./env"
+import { REVALIDATE_TIME } from "./utils/cache"
 
-export default function BlogPage() {
+//   const response = await fetch(
+//     `https://cdn.contentful.com/spaces/x4hjy2nnt83c/environments/master/entries?content_type=pageBlogPost&fields.title[match]=${search || ''}&limit=${PAGE_SIZE}&order=-fields.publishedDate`,
+//     {
+
+
+async function fetchBlogPosts() {
+  const response = await fetch(`${API_BASE_URL}/spaces/${env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID}/environments/${env.NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT}/entries`, {
+    cache: 'force-cache',
+    next: {
+      revalidate: REVALIDATE_TIME
+    },
+    headers: {
+      Authorization: `Bearer ${env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN}`,
+    },
+  })
+  const data = await response.json()
+
+  console.log("DATA:", data)
+}
+
+export default async function BlogPage() {
+  await fetchBlogPosts()
+
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <div className="space-y-8">
@@ -33,7 +58,7 @@ export default function BlogPage() {
           {/* Blog Posts */}
           <div className="lg:col-span-3 space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold">All Posts</h2>
+              <h2 className="text-2xl font-semibold text-blue-600">All Posts</h2>
               <p className="text-sm text-muted-foreground">Showing 1-6 of 24 posts</p>
             </div>
 
@@ -51,7 +76,7 @@ export default function BlogPage() {
                         </Badge>
                       ))}
                     </div>
-                    <Link href={`/blog/${post.slug}`} className="hover:underline">
+                    <Link href={`/${post.slug}`} className="hover:underline">
                       <h3 className="text-lg font-semibold">{post.title}</h3>
                     </Link>
                   </CardHeader>
@@ -60,7 +85,7 @@ export default function BlogPage() {
                   </CardContent>
                   <CardFooter className="p-4 pt-0 flex justify-between">
                     <p className="text-sm text-muted-foreground">{post.date}</p>
-                    <Link href={`/blog/${post.slug}`}>
+                    <Link href={`/${post.slug}`}>
                       <Button variant="link" className="p-0 h-auto">
                         Read more
                       </Button>

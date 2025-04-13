@@ -22,7 +22,7 @@ export function RelatedPosts({ posts }: RelatedPostsProps) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {posts.map((post) => (
           <Card key={post.id} className="overflow-hidden">
-            <Link href={`/blog/${post.slug}`} className="block">
+            <Link href={`/${post.slug}`} className="block">
               <div className="relative h-48 w-full">
                 <Image
                   src={post.image || "/placeholder.svg"}
@@ -33,7 +33,7 @@ export function RelatedPosts({ posts }: RelatedPostsProps) {
               </div>
             </Link>
             <CardContent className="p-4">
-              <Link href={`/blog/${post.slug}`} className="hover:underline">
+              <Link href={`/${post.slug}`} className="hover:underline">
                 <h3 className="font-semibold mb-2">{post.title}</h3>
               </Link>
               <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{post.excerpt}</p>

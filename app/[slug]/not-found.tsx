@@ -9,7 +9,7 @@ export default function NotFound() {
         Sorry, the blog post {"you're "} looking for {"doesn't"} exist or has been removed.
       </p>
       <Button asChild>
-        <Link href="/blog">Back to Blog</Link>
+        <Link href="/">Back to Blog</Link>
       </Button>
     </div>
   )

@@ -17,7 +17,7 @@ export function FeaturedPosts() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Featured Post */}
         <div className="lg:col-span-2 relative group overflow-hidden rounded-xl">
-          <Link href={`/blog/${featuredPosts[0].slug}`} className="absolute inset-0 z-10">
+          <Link href={`/${featuredPosts[0].slug}`} className="absolute inset-0 z-10">
             <span className="sr-only">View article: {featuredPosts[0].title}</span>
           </Link>
           <div className="relative h-[400px] w-full">
@@ -64,7 +64,7 @@ export function FeaturedPosts() {
         <div className="grid grid-cols-1 gap-6">
           {featuredPosts.slice(1, 3).map((post) => (
             <div key={post.id} className="relative group overflow-hidden rounded-xl">
-              <Link href={`/blog/${post.slug}`} className="absolute inset-0 z-10">
+              <Link href={`/${post.slug}`} className="absolute inset-0 z-10">
                 <span className="sr-only">View article: {post.title}</span>
               </Link>
               <div className="relative h-[180px] w-full">
@@ -112,7 +112,7 @@ export function FeaturedPosts() {
                 {post.categories[0]}
               </Badge>
             </div>
-            <Link href={`/blog/${post.slug}`} className="group-hover:underline decoration-2 underline-offset-2">
+            <Link href={`/${post.slug}`} className="group-hover:underline decoration-2 underline-offset-2">
               <h3 className="font-semibold text-lg mb-1">{post.title}</h3>
             </Link>
             <p className="text-muted-foreground text-sm line-clamp-2 mb-2">{post.excerpt}</p>

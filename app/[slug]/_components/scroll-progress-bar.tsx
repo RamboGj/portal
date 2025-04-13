@@ -10,8 +10,7 @@ interface ScrollProgressBarProps {
 }
 
 export function ScrollProgressBar({
-  color = "bg-primary",
-  height = 3,
+  height = 5,
   className,
 }: ScrollProgressBarProps) {
   const [scrollProgress, setScrollProgress] = useState(0)
@@ -62,8 +61,8 @@ export function ScrollProgressBar({
       aria-valuemax={100}
     >
       <div 
-        className={cn("h-full", color)}
-        style={{ width: `${scrollProgress}%`, transition: "width 0.1s ease-out" }}
+        className={cn("h-full bg-blue-600 rounded-xl transition-transform  ease-in duration-1000")}
+        style={{ width: `${scrollProgress}%` }}
       />
     </div>
   )

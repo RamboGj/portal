@@ -27,7 +27,7 @@ export function AuthorBio({ author }: AuthorBioProps) {
         <div className="space-y-2">
           <div>
             <h3 className="text-lg font-semibold">{author.name}</h3>
-            <Link href={`/blog/author/${author.username}`} className="text-sm text-muted-foreground hover:text-primary">
+            <Link href={`/author/${author.username}`} className="text-sm text-muted-foreground hover:text-primary">
               View all posts
             </Link>
           </div>

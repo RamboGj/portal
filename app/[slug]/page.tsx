@@ -32,7 +32,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <div className="max-w-4xl mx-auto">
         {/* Breadcrumb */}
         <nav className="flex items-center text-sm text-muted-foreground mb-6">
-          <Link href="/blog" className="hover:text-foreground transition-colors">
+          <Link href="/" className="hover:text-foreground transition-colors font-bold text-blue-600">
             Blog
           </Link>
           <span className="mx-2">/</span>
@@ -43,7 +43,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         <header className="mb-8">
           <div className="flex flex-wrap gap-2 mb-4">
             {post.categories.map((category) => (
-              <Link href={`/blog/category/${category.toLowerCase()}`} key={category}>
+              <Link href={`/category/${category.toLowerCase()}`} key={category}>
                 <Badge variant="secondary">{category}</Badge>
               </Link>
             ))}
@@ -55,7 +55,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 <AvatarImage src={post.author.avatar || "/placeholder.svg"} alt={post.author.name} />
                 <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
               </Avatar>
-              <Link href={`/blog/author/${post.author.username}`} className="hover:text-foreground transition-colors">
+              <Link href={`/author/${post.author.username}`} className="hover:text-foreground transition-colors">
                 {post.author.name}
               </Link>
             </div>
@@ -89,7 +89,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div className="sticky top-8">
               <TableOfContents headings={post.headings} />
               <div className="mt-8">
-                <ShareButtons url={`https://yourblog.com/blog/${post.slug}`} title={post.title} />
+                <ShareButtons url={`https://yourblog.com/${post.slug}`} title={post.title} />
               </div>
             </div>
           </div>
@@ -176,7 +176,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             {/* Tags */}
             <div className="flex flex-wrap gap-2 my-8">
               {post.tags.map((tag) => (
-                <Link href={`/blog/tag/${tag.toLowerCase()}`} key={tag}>
+                <Link href={`/${tag.toLowerCase()}`} key={tag}>
                   <Badge variant="outline">#{tag}</Badge>
                 </Link>
               ))}
@@ -184,7 +184,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
             {/* Share Buttons (Mobile) */}
             <div className="lg:hidden mb-8">
-              <ShareButtons url={`https://yourblog.com/blog/${post.slug}`} title={post.title} />
+              <ShareButtons url={`https://yourblog.com/${post.slug}`} title={post.title} />
             </div>
 
             {/* Author Bio */}
@@ -194,7 +194,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
               {post.prevPost && (
                 <Link
-                  href={`/blog/${post.prevPost.slug}`}
+                  href={`/${post.prevPost.slug}`}
                   className="group flex items-center gap-2 p-4 border rounded-lg hover:bg-muted transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -206,7 +206,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               )}
               {post.nextPost && (
                 <Link
-                  href={`/blog/${post.nextPost.slug}`}
+                  href={`/${post.nextPost.slug}`}
                   className="group flex items-center justify-end gap-2 p-4 border rounded-lg hover:bg-muted transition-colors ml-auto"
                 >
                   <div className="text-right">
