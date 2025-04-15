@@ -1,50 +1,133 @@
-import Link from "next/link"
-import Image from "next/image"
-
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import { BlogFilters } from "./_components/blog-filters"
 import { Pagination } from "./_components/pagination"
-import { FeaturedPosts } from "./_components/featured-posts"
 import { API_BASE_URL } from "./utils/api"
 import { env } from "./env"
-import { REVALIDATE_TIME } from "./utils/cache"
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import Image from "next/image"
+import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
+import { CalendarIcon, Clock, Tag } from "lucide-react"
 
-//   const response = await fetch(
-//     `https://cdn.contentful.com/spaces/x4hjy2nnt83c/environments/master/entries?content_type=pageBlogPost&fields.title[match]=${search || ''}&limit=${PAGE_SIZE}&order=-fields.publishedDate`,
-//     {
+import { format } from "date-fns"
+import { Avatar } from "@radix-ui/react-avatar"
+import { AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-// interface BlogPostsReturnProps {
-//   skip: number
-//   limit: number
-//   items: {
-//     fields: { slug: string, rating: number, publishedDate: Date, title: string, subtitle: string }
-//     metadata: {
-//       tags: string[]
-//       concepts: string[]
-//     }
-//   }[]
-// }
+interface AssetProps {
+  fields: {
+    title: string
+    description: string
+    file: {
+      contentType: 'string'
+      details: {
+        image: { width: number, height: number } 
+        size: number
+      }
+      fileName: string
+      url: string
+    }
+  }
+  metadata: {
+    tags: string[]
+    concepts: string[]
+  }
+  sys: {
+    createdAt: Date
+    updatedAt: Date
+    environment: {
+      sys: {
+        id: string, 
+        type: string, 
+        linkType: string
+      }
+    }
+    id: string
+    locale: string
+    type: string | 'Asset'
+    publishedVersion: number
+    revision: number
+    space: {
+      sys: {
+        id: string, 
+        type: string, 
+        linkType: string
+      }
+    }
+  }
+}
+
+interface EntryProps {
+  fields: {
+    avatar: {
+      sys: {
+        type: string, linkType: 'Asset' | string, id: string
+      }
+    }
+    name: string
+  }
+}
+
+
+interface BlogPostsReturnProps {
+  includes: { Asset: AssetProps[] | null, Entry: EntryProps[] | null }
+  skip: number
+  limit: number
+  items: {
+    fields: { 
+      slug: string, 
+      rating: number, 
+      readTime: number,
+      author: {
+        sys: {
+          type: string | 'Link', 
+          linkType: 'Entry',
+          id: string
+        }
+      }
+
+      publishedDate: Date, 
+      title: string, 
+      subtitle: string, 
+      featuredImage: {
+        sys: {
+          id: string
+          linkType: string /* Asset */
+          type: string /* Link */
+        }
+      } 
+      content: {
+        data: unknown
+        marks: unknown[]
+        nodeType: string | 'text'
+        value: string
+      }
+    }
+    metadata: {
+      tags: string[]
+      concepts: string[]
+    }
+  }[]
+}
 
 async function fetchBlogPosts() {
-  const response = await fetch(`${API_BASE_URL}/spaces/${env.CONTENTFUL_SPACE_ID}/environments/${env.CONTENTFUL_ENVIRONMENT}/entries`, {
-    cache: 'force-cache',
-    next: {
-      revalidate: REVALIDATE_TIME
-    },
+  const response = await fetch(`${API_BASE_URL}/spaces/${env.CONTENTFUL_SPACE_ID}/environments/${env.CONTENTFUL_ENVIRONMENT}/entries?content_type=blogPost`, {
+    // next: {
+    //   revalidate: REVALIDATE_TIME
+    // },
     headers: {
       Authorization: `Bearer ${env.CONTENTFUL_ACCESS_TOKEN}`,
     },
   })
-  const data = await response.json()
+  const data: BlogPostsReturnProps = await response.json()
 
-  console.log("DATA:", data)
+  console.log("data ->", data)
+
+  return data 
 }
 
 export default async function BlogPage() {
-  await fetchBlogPosts()
+  const { items, includes } = await fetchBlogPosts()
+
+  console.log("INCLUDES ->", items[0].fields)
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
@@ -57,8 +140,8 @@ export default async function BlogPage() {
         </div>
 
         {/* Featured Posts Section */}
-        <FeaturedPosts />
-        <Separator />
+        {/* <FeaturedPosts />
+        <Separator /> */}
 
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -75,36 +158,62 @@ export default async function BlogPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {blogPosts.map((post) => (
-                <Card key={post.id}>
-                  <div className="relative h-48 w-full">
-                    <Image src={post.image || "/placeholder.svg"} alt={post.title} fill className="object-cover" />
-                  </div>
-                  <CardHeader className="p-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      {post.categories.slice(0, 2).map((category) => (
-                        <Badge key={category} variant="secondary">
-                          {category}
-                        </Badge>
-                      ))}
+              {items.map(({ fields }) => {
+                const image = includes?.Asset?.find((asset) => {
+                  return asset.sys.id === fields.featuredImage.sys.id
+                }) 
+
+                const author = 
+
+                return (
+                  <Link key={fields.slug} href={`/${fields.slug}`}>
+                    <Card className="overflow-hidden flex flex-col h-full transition-all hover:shadow-md">
+                    <div className="relative aspect-video w-full overflow-hidden">
+                      <Image
+                        src={`https:${image?.fields.file.url}` || ""}
+                        alt={image?.fields.title || ""}
+                        fill
+                        className="object-cover transition-transform hover:scale-120 duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
                     </div>
-                    <Link href={`/${post.slug}`} className="hover:underline">
-                      <h3 className="text-lg font-semibold">{post.title}</h3>
-                    </Link>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-0">
-                    <p className="text-muted-foreground text-sm line-clamp-2">{post.excerpt}</p>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-0 flex justify-between">
-                    <p className="text-sm text-muted-foreground">{post.date}</p>
-                    <Link href={`/${post.slug}`}>
-                      <Button variant="link" className="p-0 h-auto">
-                        Read more
-                      </Button>
-                    </Link>
-                  </CardFooter>
-                </Card>
-              ))}
+                    <CardHeader className="p-4 pb-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        {/* <Badge variant="secondary" className="rounded-full">
+                          <Tag className="h-3 w-3 mr-1" />
+                          {""}
+                        </Badge> */}
+                        <div className="text-xs text-muted-foreground flex items-center">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {fields.readTime} minutes
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-xl font-bold leading-tight tracking-tight">{fields.title}</h3>
+                    </CardHeader>
+                    <CardContent className="p-4 pt-2 flex-grow">
+                      <p className="text-muted-foreground text-sm line-clamp-3">{fields.subtitle}</p>
+                    </CardContent>
+                    <CardFooter className="p-4 pt-0 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={"/placeholder.svg"} alt={fields.author.sys} />
+                          <AvatarFallback>{fields.author.sys.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-medium">{"Thiago Aladio Marques"}</p>
+                          <div className="flex items-center text-xs text-muted-foreground">
+                            <CalendarIcon className="h-3 w-3 mr-1" />
+                            {format(fields.publishedDate, "MMM dd")}
+                          </div>
+                        </div>
+                      </div>
+                      
+                    </CardFooter>
+                  </Card>
+                </Link>
+                )
+              } )}
             </div>
 
             {/* Pagination */}
@@ -115,62 +224,3 @@ export default async function BlogPage() {
     </div>
   )
 }
-
-
-// Update the blogPosts array with better placeholder images
-const blogPosts = [
-  {
-    id: 4,
-    title: "Building Accessible Web Applications",
-    slug: "building-accessible-web-applications",
-    excerpt: "Learn how to create web applications that are accessible to everyone.",
-    date: "March 22, 2024",
-    image: "https://imgs.search.brave.com/m2KKpE9mVa6jzJe-IM4DZsUOMc5IyHY2kQHyhYBvCxs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/ODg1MzEtTUxCNzY3/NTI4Nzg3NjdfMDUy/MDI0LU8ud2VicA",
-    categories: ["Accessibility", "Web Dev"],
-  },
-  {
-    id: 5,
-    title: "Introduction to TypeScript",
-    slug: "introduction-to-typescript",
-    excerpt: "Get started with TypeScript and learn how it can improve your JavaScript development.",
-    date: "March 18, 2024",
-    image: "https://imgs.search.brave.com/m2KKpE9mVa6jzJe-IM4DZsUOMc5IyHY2kQHyhYBvCxs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/ODg1MzEtTUxCNzY3/NTI4Nzg3NjdfMDUy/MDI0LU8ud2VicA",
-    categories: ["TypeScript", "JavaScript"],
-  },
-  {
-    id: 6,
-    title: "Optimizing React Performance",
-    slug: "optimizing-react-performance",
-    excerpt: "Techniques and strategies to improve the performance of your React applications.",
-    date: "March 15, 2024",
-    image: "https://imgs.search.brave.com/m2KKpE9mVa6jzJe-IM4DZsUOMc5IyHY2kQHyhYBvCxs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/ODg1MzEtTUxCNzY3/NTI4Nzg3NjdfMDUy/MDI0LU8ud2VicA",
-    categories: ["React", "Performance"],
-  },
-  {
-    id: 7,
-    title: "State Management in 2024",
-    slug: "state-management-in-2024",
-    excerpt: "An overview of modern state management solutions for frontend applications.",
-    date: "March 10, 2024",
-    image: "https://imgs.search.brave.com/m2KKpE9mVa6jzJe-IM4DZsUOMc5IyHY2kQHyhYBvCxs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/ODg1MzEtTUxCNzY3/NTI4Nzg3NjdfMDUy/MDI0LU8ud2VicA",
-    categories: ["React", "State Management"],
-  },
-  {
-    id: 8,
-    title: "Building a REST API with Node.js",
-    slug: "building-rest-api-nodejs",
-    excerpt: "A step-by-step guide to creating a RESTful API using Node.js and Express.",
-    date: "March 5, 2024",
-    image: "https://imgs.search.brave.com/m2KKpE9mVa6jzJe-IM4DZsUOMc5IyHY2kQHyhYBvCxs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/ODg1MzEtTUxCNzY3/NTI4Nzg3NjdfMDUy/MDI0LU8ud2VicA",
-    categories: ["Node.js", "API"],
-  },
-  {
-    id: 9,
-    title: "CSS Grid Layout Mastery",
-    slug: "css-grid-layout-mastery",
-    excerpt: "Master CSS Grid Layout to create complex and responsive web layouts with ease.",
-    date: "February 28, 2024",
-    image: "https://imgs.search.brave.com/m2KKpE9mVa6jzJe-IM4DZsUOMc5IyHY2kQHyhYBvCxs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9OUV9OUF82/ODg1MzEtTUxCNzY3/NTI4Nzg3NjdfMDUy/MDI0LU8ud2VicA",
-    categories: ["CSS", "Layout"],
-  },
-]
