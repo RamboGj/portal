@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BlogFilters } from "./_components/blog-filters"
 import { Pagination } from "./_components/pagination"
 import { API_BASE_URL } from "./utils/api"
@@ -56,16 +57,42 @@ interface AssetProps {
 }
 
 interface EntryProps {
-  fields: {
-    avatar: {
+  fields: any
+  metadata: {
+    tags: string[]
+    concepts: string[]
+  }
+  sys: {
+    id: string
+    type: string | 'Entry'
+    createdAt: Date
+    updatedAt: Date
+    locale: string
+    publishedVersion: number
+    revision: number
+    environment: {
       sys: {
-        type: string, linkType: 'Asset' | string, id: string
+        id: string
+        linkType: string | 'Environment'
+        type: string | 'Link'
       }
     }
-    name: string
-  }
+    contentType: {
+      sys: {
+        id: string
+        linkType: string | 'ContentType'
+        type: string | 'Link'
+      }
+    }
+    space: {
+      sys: {
+        id: string
+        linkType: string | 'Space'
+        type: string | 'Link'
+      }
+    }
+  }  
 }
-
 
 interface BlogPostsReturnProps {
   includes: { Asset: AssetProps[] | null, Entry: EntryProps[] | null }
@@ -83,7 +110,6 @@ interface BlogPostsReturnProps {
           id: string
         }
       }
-
       publishedDate: Date, 
       title: string, 
       subtitle: string, 
@@ -100,6 +126,13 @@ interface BlogPostsReturnProps {
         nodeType: string | 'text'
         value: string
       }
+      tags: {
+        sys: {
+          id:string
+          linkType: 'Entry'
+          type: string | 'Link'
+        }
+      }[]
     }
     metadata: {
       tags: string[]
@@ -126,8 +159,6 @@ async function fetchBlogPosts() {
 
 export default async function BlogPage() {
   const { items, includes } = await fetchBlogPosts()
-
-  console.log("INCLUDES ->", items[0].fields)
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
@@ -159,11 +190,21 @@ export default async function BlogPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {items.map(({ fields }) => {
+                const author = includes?.Entry?.find((asset) => {
+                  return asset.sys.id === fields.author.sys.id
+                })
+
                 const image = includes?.Asset?.find((asset) => {
                   return asset.sys.id === fields.featuredImage.sys.id
                 }) 
 
-                const author = 
+                const authorImage = includes?.Asset?.find((asset) => {
+                  return asset.sys.id === author?.fields.avatar.sys.id
+                })?.fields.file.url
+
+                const tags = includes?.Entry?.filter((entry) => entry.sys.contentType.sys.id === 'tag')
+
+                console.log("tags ->", tags)
 
                 return (
                   <Link key={fields.slug} href={`/${fields.slug}`}>
@@ -179,13 +220,20 @@ export default async function BlogPage() {
                     </div>
                     <CardHeader className="p-4 pb-0">
                       <div className="flex items-center gap-2 mb-2">
-                        {/* <Badge variant="secondary" className="rounded-full">
-                          <Tag className="h-3 w-3 mr-1" />
-                          {""}
-                        </Badge> */}
+                        {tags?.map((tag) => {
+                          console.log("tag ->", tag)
+
+                          return (
+                            <Badge key={tag.fields.value} variant="secondary" className="rounded-full">
+                              <Tag className="h-3 w-3 mr-1" />
+                              {tag.fields.value}
+                            </Badge>
+                          )
+                        })}
+                       
                         <div className="text-xs text-muted-foreground flex items-center">
                           <Clock className="h-3 w-3 mr-1" />
-                          {fields.readTime} minutes
+                          {fields.readTime} min read
                         </div>
                       </div>
                       
@@ -196,9 +244,9 @@ export default async function BlogPage() {
                     </CardContent>
                     <CardFooter className="p-4 pt-0 flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={"/placeholder.svg"} alt={fields.author.sys} />
-                          <AvatarFallback>{fields.author.sys.charAt(0)}</AvatarFallback>
+                        <Avatar className="h-8 w-8 rounded-full">
+                          <AvatarImage className=" rounded-full" src={`https:${authorImage}`} alt={author?.fields.name} />
+                          <AvatarFallback>{author?.fields.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="text-sm font-medium">{"Thiago Aladio Marques"}</p>
