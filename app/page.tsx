@@ -159,7 +159,9 @@ async function fetchBlogPosts(authors?: string) {
   // Extract all author IDs
   const authorIds = authorData.items.map((author: any) => author.sys.id);
 
-  const response = await fetch(`${API_BASE_URL}/spaces/${env.CONTENTFUL_SPACE_ID}/environments/${env.CONTENTFUL_ENVIRONMENT}/entries?content_type=blogPost&fields.author.sys.id[in]=${authorIds}`, {
+  const authorFilter = authorIds.length > 0 ? `fields.author.sys.id[in]=${authorIds}` : ''
+
+  const response = await fetch(`${API_BASE_URL}/spaces/${env.CONTENTFUL_SPACE_ID}/environments/${env.CONTENTFUL_ENVIRONMENT}/entries?content_type=blogPost&${authorFilter}`, {
     next: {
       revalidate: REVALIDATE_TIME
     },
