@@ -12,6 +12,7 @@ import { format } from "date-fns"
 import { Avatar } from "@radix-ui/react-avatar"
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import BlogFilters from "./_components/BlogFilters/BlogFilters"
+import { REVALIDATE_TIME } from "./utils/cache"
 
 export interface AssetProps {
   fields: {
@@ -143,11 +144,25 @@ interface BlogPostsReturnProps {
   }[]
 }
 
-async function fetchBlogPosts() {
-  const response = await fetch(`${API_BASE_URL}/spaces/${env.CONTENTFUL_SPACE_ID}/environments/${env.CONTENTFUL_ENVIRONMENT}/entries?content_type=blogPost`, {
-    // next: {
-    //   revalidate: REVALIDATE_TIME
-    // },
+async function fetchBlogPosts(authors?: string) {
+  const authorResponse = await fetch(
+    `${API_BASE_URL}/spaces/${env.CONTENTFUL_SPACE_ID}/environments/${env.CONTENTFUL_ENVIRONMENT}/entries?content_type=author&fields.name[in]=${authors}`,
+    {
+      headers: {
+        Authorization: `Bearer ${env.CONTENTFUL_ACCESS_TOKEN}`,
+      },
+    }
+  );
+  
+  const authorData = await authorResponse.json();
+
+  // Extract all author IDs
+  const authorIds = authorData.items.map((author: any) => author.sys.id);
+
+  const response = await fetch(`${API_BASE_URL}/spaces/${env.CONTENTFUL_SPACE_ID}/environments/${env.CONTENTFUL_ENVIRONMENT}/entries?content_type=blogPost&fields.author.sys.id[in]=${authorIds}`, {
+    next: {
+      revalidate: REVALIDATE_TIME
+    },
     headers: {
       Authorization: `Bearer ${env.CONTENTFUL_ACCESS_TOKEN}`,
     },
@@ -157,8 +172,12 @@ async function fetchBlogPosts() {
   return data 
 }
 
-export default async function BlogPage() {
-  const { items, includes } = await fetchBlogPosts()
+export default async function BlogPage(
+  { searchParams }: { searchParams: Promise<{ authors?: string, categories?: string }> }
+) {
+  const { authors } = await searchParams
+
+  const { items, includes } = await fetchBlogPosts(authors)
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
@@ -189,7 +208,7 @@ export default async function BlogPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {items.map(({ fields }) => {
+              {items?.map(({ fields }) => {
                 const author = includes?.Entry?.find((asset) => {
                   return asset.sys.id === fields.author.sys.id
                 })
