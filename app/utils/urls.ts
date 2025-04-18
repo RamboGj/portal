@@ -1,0 +1,1 @@
+export const APP_URL = "https://portal-two-flame.vercel.app"

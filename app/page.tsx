@@ -13,7 +13,7 @@ import { format } from "date-fns"
 import { Avatar } from "@radix-ui/react-avatar"
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-interface AssetProps {
+export interface AssetProps {
   fields: {
     title: string
     description: string
@@ -56,7 +56,7 @@ interface AssetProps {
   }
 }
 
-interface EntryProps {
+export interface EntryProps {
   fields: any
   metadata: {
     tags: string[]
@@ -94,46 +94,48 @@ interface EntryProps {
   }  
 }
 
+export interface PostFields {
+    slug: string, 
+    rating: number, 
+    readTime: number,
+    author: {
+      sys: {
+        type: string | 'Link', 
+        linkType: 'Entry',
+        id: string
+      }
+    }
+    publishedDate: Date, 
+    title: string, 
+    subtitle: string, 
+    featuredImage: {
+      sys: {
+        id: string
+        linkType: string /* Asset */
+        type: string /* Link */
+      }
+    } 
+    content: {
+      data: unknown
+      marks: unknown[]
+      nodeType: string | 'text'
+      value: string
+    }
+    tags: {
+      sys: {
+        id:string
+        linkType: 'Entry'
+        type: string | 'Link'
+      }
+    }
+}
+
 interface BlogPostsReturnProps {
   includes: { Asset: AssetProps[] | null, Entry: EntryProps[] | null }
   skip: number
   limit: number
   items: {
-    fields: { 
-      slug: string, 
-      rating: number, 
-      readTime: number,
-      author: {
-        sys: {
-          type: string | 'Link', 
-          linkType: 'Entry',
-          id: string
-        }
-      }
-      publishedDate: Date, 
-      title: string, 
-      subtitle: string, 
-      featuredImage: {
-        sys: {
-          id: string
-          linkType: string /* Asset */
-          type: string /* Link */
-        }
-      } 
-      content: {
-        data: unknown
-        marks: unknown[]
-        nodeType: string | 'text'
-        value: string
-      }
-      tags: {
-        sys: {
-          id:string
-          linkType: 'Entry'
-          type: string | 'Link'
-        }
-      }[]
-    }
+    fields: PostFields
     metadata: {
       tags: string[]
       concepts: string[]
@@ -151,8 +153,6 @@ async function fetchBlogPosts() {
     },
   })
   const data: BlogPostsReturnProps = await response.json()
-
-  console.log("data ->", data)
 
   return data 
 }
@@ -204,8 +204,6 @@ export default async function BlogPage() {
 
                 const tags = includes?.Entry?.filter((entry) => entry.sys.contentType.sys.id === 'tag')
 
-                console.log("tags ->", tags)
-
                 return (
                   <Link key={fields.slug} href={`/${fields.slug}`}>
                     <Card className="overflow-hidden flex flex-col h-full transition-all hover:shadow-md">
@@ -221,8 +219,6 @@ export default async function BlogPage() {
                     <CardHeader className="p-4 pb-0">
                       <div className="flex items-center gap-2 mb-2">
                         {tags?.map((tag) => {
-                          console.log("tag ->", tag)
-
                           return (
                             <Badge key={tag.fields.value} variant="secondary" className="rounded-full">
                               <Tag className="h-3 w-3 mr-1" />

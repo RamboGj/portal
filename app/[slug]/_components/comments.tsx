@@ -26,7 +26,6 @@ export function Comments({ postId }: CommentsProps) {
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // In a real app, you would send the comment to your API
-    console.log("Submitting comment:", comment)
 
     // Reset form
     setComment("")
