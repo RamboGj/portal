@@ -52,17 +52,11 @@ export const getOptions = (includes: any) => {
           const asset = includes.Asset.find(
             (item: any) => item.sys.id === entry.fields.image.sys.id,
           )
-
-          console.log("[TARGET ID]: ", targetId)
-          console.log("[ENTRY]: ", entry)
-          console.log("[asset]: ", asset)
   
           if (asset && asset.fields.file) {
             const { url, details } = asset.fields.file
             const { width, height } = details.image || { width: 620, height: 385 }
   
-            console.log("URL ->", url)
-
             return (
               <Image
                 src={`https:${url}`}
@@ -92,8 +86,6 @@ export const getOptions = (includes: any) => {
             const { url, details } = asset.fields.file
             const { width, height } = details.image || { width: 620, height: 385 }
   
-            console.log("URL ->", url)
-
             return (
               <Image
                 src={`https:${url}`}
@@ -145,8 +137,6 @@ export const getOptions = (includes: any) => {
   }
 
 export function BlogPostPageClient({ data }: { data: BlogPostProps }) {
-  console.log("data ->", data)
-
   const content = data.items[0].fields.content
     
     const post = data.items[0].fields
@@ -155,8 +145,6 @@ export function BlogPostPageClient({ data }: { data: BlogPostProps }) {
         (asset) => asset.sys.id === data.items[0].fields.featuredImage.sys.id,
       )
   
-      console.log("content ->", content)
-
     const imageHref = `https:${image?.fields.file.url}`
 
   return (

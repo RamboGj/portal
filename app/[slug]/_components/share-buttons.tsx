@@ -1,6 +1,6 @@
 "use client"
 
-import { Twitter, Facebook, Linkedin, Link } from "lucide-react"
+import { Linkedin, Link, Twitter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 
@@ -30,24 +30,13 @@ export function ShareButtons({ url, title }: ShareButtonsProps) {
           size="icon"
           onClick={() =>
             window.open(
-              `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+              `https://x.com/intent/x?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
               "_blank",
             )
           }
           aria-label="Share on Twitter"
         >
           <Twitter className="h-4 w-4 text-white" />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-           className="bg-blue-600 hover:bg-blue-800 transition duration-500 hover:cursor-pointer hover:scale-110"
-          onClick={() =>
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, "_blank")
-          }
-          aria-label="Share on Facebook"
-        >
-          <Facebook className="h-4 w-4 text-white" />
         </Button>
         <Button
          className="bg-blue-600 hover:bg-blue-800 transition duration-500 hover:cursor-pointer hover:scale-110"

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BlogFilters } from "./_components/blog-filters"
 import { Pagination } from "./_components/pagination"
 import { API_BASE_URL } from "./utils/api"
 import { env } from "./env"
@@ -12,6 +11,7 @@ import { CalendarIcon, Clock, Tag } from "lucide-react"
 import { format } from "date-fns"
 import { Avatar } from "@radix-ui/react-avatar"
 import { AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import BlogFilters from "./_components/BlogFilters/BlogFilters"
 
 export interface AssetProps {
   fields: {
