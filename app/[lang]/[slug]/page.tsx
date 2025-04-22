@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
-import { env } from "../env"
+import { env } from "../../env"
 import { AssetProps, PostFields } from "../page"
-import { API_BASE_URL } from "../utils/api"
+import { API_BASE_URL } from "../../utils/api"
 import { BlogPostPageClient } from "./_components/client"
 
 export interface FeatureImageProps {
@@ -130,6 +130,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   
   const data = await onGetPostBySlug(slug)
 
+  
   if (!data) notFound()
 
   return <BlogPostPageClient data={data} />
